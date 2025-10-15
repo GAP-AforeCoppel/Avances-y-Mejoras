@@ -496,6 +496,8 @@
             });
 
             colorPalette.addEventListener('click', (e) => {
+                // Detener la propagación para que no interfiera con otros eventos del visor
+                e.stopPropagation();
                 const button = e.target.closest('button');
                 if (button && button.dataset.color) {
                     currentPointerColor = button.dataset.color;
@@ -503,7 +505,9 @@
                 }
             });
 
-            pointerToggleBtn.addEventListener('click', () => {
+            pointerToggleBtn.addEventListener('click', (e) => {
+                // Detener la propagación para que el clic no sea capturado por otros listeners
+                e.stopPropagation();
                 paintModeActive = !paintModeActive;
                 if (paintModeActive) {
                     pointerStatus.classList.remove('bg-red-500');
