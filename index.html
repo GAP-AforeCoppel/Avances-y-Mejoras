@@ -58,10 +58,12 @@
 
     <div class="container mx-auto max-w-6xl py-12 px-4 sm:px-6 lg:px-8">
         <header class="text-center mb-10 pt-12">
-            <h1 class="text-3xl md:text-4xl font-bold text-[#004e91]">Avances y Mejoras</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-[#004e91] flex items-center justify-center">
+                Avances y Mejoras <span class="ml-3 text-3xl">🏆</span>
+            </h1>
             <div class="flex justify-center items-center mt-4 space-x-3">
                 <span class="text-lg text-gray-600">Implementadas por</span>
-                <img src="logo gap.png" alt="Logo Gerencia de Atención al Público" class="h-12">
+                <img src="logo gap.png" alt="Logo Gerencia de Atención al Público" class="h-14">
             </div>
         </header>
 
@@ -128,14 +130,22 @@
         <img id="fullscreen-image" src="" alt="Vista a pantalla completa" class="max-w-full max-h-full rounded-lg object-contain">
         
         <!-- Puntero Personalizado -->
-        <div id="custom-cursor" class="absolute w-4 h-4 rounded-full border-2 border-white pointer-events-none transform -translate-x-1/2 -translate-y-1/2 hidden" style="background-color: #ef4444; z-index: 9999; transition: border-color 0.2s ease;"></div>
+        <div id="custom-cursor" class="absolute w-4 h-4 rounded-full border-2 border-white pointer-events-none transform -translate-x-1/2 -translate-y-1/2 hidden" style="background-color: #ef4444; z-index: 9999;"></div>
 
-        <!-- Paleta de Colores -->
-        <div id="color-palette" class="absolute bottom-5 left-5 flex space-x-2 z-[80]">
-            <button data-color="#ef4444" class="w-8 h-8 rounded-full bg-red-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
-            <button data-color="#3b82f6" class="w-8 h-8 rounded-full bg-blue-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
-            <button data-color="#eab308" class="w-8 h-8 rounded-full bg-yellow-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
-            <button data-color="#22c55e" class="w-8 h-8 rounded-full bg-green-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
+        <!-- Controles del Puntero -->
+        <div class="absolute bottom-5 left-5 flex items-center space-x-4 z-[80]">
+            <!-- Paleta de Colores -->
+            <div id="color-palette" class="flex space-x-2">
+                <button data-color="#ef4444" class="w-8 h-8 rounded-full bg-red-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
+                <button data-color="#3b82f6" class="w-8 h-8 rounded-full bg-blue-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
+                <button data-color="#eab308" class="w-8 h-8 rounded-full bg-yellow-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
+                <button data-color="#22c55e" class="w-8 h-8 rounded-full bg-green-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
+            </div>
+            <!-- Botón de ON/OFF -->
+            <button id="pointer-toggle-btn" class="flex items-center space-x-2 bg-gray-700/50 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-gray-600/70 transition-colors cursor-pointer">
+                <span>ON/OFF</span>
+                <span id="pointer-status" class="w-4 h-4 rounded-full bg-red-500 border-2 border-gray-300"></span>
+            </button>
         </div>
     </div>
 
@@ -225,6 +235,8 @@
             const closeFullscreenBtn = document.getElementById('close-fullscreen-btn');
             const customCursor = document.getElementById('custom-cursor');
             const colorPalette = document.getElementById('color-palette');
+            const pointerToggleBtn = document.getElementById('pointer-toggle-btn');
+            const pointerStatus = document.getElementById('pointer-status');
 
             let currentImageIndex = 0;
             let currentImageSet = [];
@@ -393,8 +405,7 @@
 
             // --- LÓGICA PARA ZOOM, ARRASTRE Y PUNTERO PERSONALIZADO ---
             let scale = 1, isDragging = false, startX, startY, x = 0, y = 0;
-            let paintModeActive = false; // El modo pintura se activa/desactiva
-            let isPainting = false; // Indica si el botón está presionado para pintar
+            let paintModeActive = false; // El modo pintura se activa/desactiva con el botón
             let currentPointerColor = '#ef4444';
 
             const openFullscreen = (src) => {
@@ -402,7 +413,7 @@
                 scale = 1; x = 0; y = 0;
                 fullscreenImage.style.transform = `translate(0px, 0px) scale(1)`;
                 fullscreenViewer.classList.remove('opacity-0', 'pointer-events-none');
-                customCursor.classList.remove('hidden');
+                customCursor.classList.remove('hidden'); // Siempre mostrar el cursor al entrar
             };
 
             const closeFullscreen = () => {
@@ -410,7 +421,9 @@
                 setTimeout(() => {
                     fullscreenViewer.classList.add('pointer-events-none');
                     customCursor.classList.add('hidden');
-                    paintModeActive = false;
+                    paintModeActive = false; // Resetear al cerrar
+                    pointerStatus.classList.remove('bg-green-500');
+                    pointerStatus.classList.add('bg-red-500');
                 }, 300);
             };
             
@@ -432,19 +445,9 @@
                     isDragging = false;
                     fullscreenImage.classList.remove('dragging');
                 }
-                isPainting = false;
             });
             
-            fullscreenViewer.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                paintModeActive = !paintModeActive;
-            });
-
-            fullscreenViewer.addEventListener('mousedown', (e) => {
-                if(e.button === 0 && paintModeActive && !isDragging) { 
-                    isPainting = true;
-                }
-            });
+            fullscreenViewer.addEventListener('contextmenu', (e) => e.preventDefault()); // Prevenir menú contextual
 
             fullscreenImage.addEventListener('mousedown', (e) => {
                 if (scale > 1 && e.button === 0) {
@@ -460,7 +463,8 @@
                 customCursor.style.left = `${e.clientX}px`;
                 customCursor.style.top = `${e.clientY}px`;
 
-                if (isPainting && paintModeActive && !isDragging) {
+                // La pintura ahora solo depende del modo activo y de que no se esté arrastrando
+                if (paintModeActive && !isDragging) {
                     const trailDot = document.createElement('div');
                     trailDot.className = 'absolute rounded-full pointer-events-none';
                     trailDot.style.backgroundColor = currentPointerColor;
@@ -498,7 +502,19 @@
                     customCursor.style.backgroundColor = currentPointerColor;
                 }
             });
+
+            pointerToggleBtn.addEventListener('click', () => {
+                paintModeActive = !paintModeActive;
+                if (paintModeActive) {
+                    pointerStatus.classList.remove('bg-red-500');
+                    pointerStatus.classList.add('bg-green-500');
+                } else {
+                    pointerStatus.classList.remove('bg-green-500');
+                    pointerStatus.classList.add('bg-red-500');
+                }
+            });
         });
     </script>
 </body>
 </html>
+
