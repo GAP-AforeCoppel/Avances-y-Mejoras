@@ -157,10 +157,10 @@
                     titulo: "6. Asignación Automática",
                     descripcion: "Se implementó una asignación automática diaria que reduce el proceso de 10-15 minutos manuales a solo 30 segundos con unos pocos clics. El sistema distribuye los folios y genera el reporte al instante.",
                     involucrados: "GAP",
-                    images: [ // Nombres de archivo para el carrusel interno
-                        "Avance%206.1.jpg",
-                        "Avance%206.2.jpg",
-                        "Avance%206.3.jpg"
+                    images: [ // Nombres de archivo para el carrusel interno (sin %20)
+                        "Avance 6.1.jpg",
+                        "Avance 6.2.jpg",
+                        "Avance 6.3.jpg"
                     ]
                 },
                 {
@@ -214,7 +214,8 @@
                 card.className = 'group flex-shrink-0 w-64 h-80 bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl';
                 card.dataset.index = index; 
 
-                const imageUrl = `${imageBaseUrl}Avance%20${index + 1}.jpg`;
+                // CORRECCIÓN: Se construye el nombre del archivo con un espacio normal
+                const imageUrl = `${imageBaseUrl}Avance ${index + 1}.jpg`; 
                 card.innerHTML = `
                     <div class="h-1/2 overflow-hidden">
                         <img src="${imageUrl}" alt="Avance ${index + 1}: ${avance.titulo}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Error';">
@@ -345,7 +346,8 @@
                     modalPrevBtn.classList.add('hidden');
                     modalNextBtn.classList.add('hidden');
                     modalImageDots.classList.add('hidden');
-                    const imageUrl = `${imageBaseUrl}Avance%20${parseInt(index) + 1}.jpg`;
+                    // CORRECCIÓN: Se construye el nombre del archivo con un espacio normal
+                    const imageUrl = `${imageBaseUrl}Avance ${parseInt(index) + 1}.jpg`;
                     modalImage.src = imageUrl;
                     modalImage.alt = `Avance ${parseInt(index) + 1}: ${avance.titulo}`;
                 }
@@ -422,3 +424,4 @@
     </script>
 </body>
 </html>
+
