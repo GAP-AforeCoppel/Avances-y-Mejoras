@@ -55,12 +55,14 @@
 <body class="text-gray-800">
 
     <img src="logo afore coppel.png" alt="Logo Afore Coppel" class="absolute top-8 left-8 h-10 z-20">
-    <img src="logo gap.png" alt="Logo GAP" class="absolute top-8 right-8 h-12 z-20">
 
     <div class="container mx-auto max-w-6xl py-12 px-4 sm:px-6 lg:px-8">
         <header class="text-center mb-10 pt-12">
             <h1 class="text-3xl md:text-4xl font-bold text-[#004e91]">Avances y Mejoras</h1>
-            <p class="mt-3 text-lg text-gray-600">Implementadas por la Gerencia de Atención al Público</p>
+            <div class="flex justify-center items-center mt-4 space-x-3">
+                <span class="text-lg text-gray-600">Implementadas por</span>
+                <img src="logo gap.png" alt="Logo Gerencia de Atención al Público" class="h-12">
+            </div>
         </header>
 
         <!-- Contenedor del Carrusel con botones de navegación -->
@@ -333,7 +335,9 @@
                 }
 
                 modalExtraContent.innerHTML = '';
-                if (index == 4) {
+                 if (index == 3) { 
+                    modalExtraContent.innerHTML = `<a href="https://aforecoppel-ops.github.io/utileria/" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">Guía de Herramienta</a>`;
+                } else if (index == 4) {
                     modalExtraContent.innerHTML = `<a href="https://gap-aforecoppel.github.io/Biblioteca-Scripts/" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">URL del sitio</a>`;
                 } else if (index == 7) { 
                      modalExtraContent.innerHTML = `
@@ -346,6 +350,8 @@
                             </a>
                         </div>
                     `;
+                } else if (index == 8) { 
+                    modalExtraContent.innerHTML = `<a href="https://aforecoppel-ops.github.io/Identificaciones-Validas/" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">Flyer Interactivo</a>`;
                 } else if (index == 9) { 
                     modalExtraContent.innerHTML = `<a href="https://lookerstudio.google.com/reporting/e88486b7-7aeb-404f-9e27-57a97492f11a/page/1I5XF" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">Looker Quejas</a>`;
                 }
@@ -432,7 +438,6 @@
             fullscreenViewer.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
                 paintModeActive = !paintModeActive;
-                customCursor.style.borderColor = paintModeActive ? '#86efac' : 'white';
             });
 
             fullscreenViewer.addEventListener('mousedown', (e) => {
@@ -497,4 +502,3 @@
     </script>
 </body>
 </html>
-
