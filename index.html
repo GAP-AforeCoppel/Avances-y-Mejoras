@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte Ejecutivo | Avances en Atención al Público</title>
+    <!-- Tailwind CSS para un diseño moderno y responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts para una tipografía limpia -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo personalizado para la fuente y el carrusel */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* un gris ligeramente más azulado */
+        }
+        /* Estilos para el contenedor del carrusel para ocultar la barra de scroll */
+        .carousel-container {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+        /* Estilos para las ventanas modales */
+        .modal, .fullscreen-viewer {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+        /* Añadir cursor de zoom a la imagen del modal */
+        #modal-image {
+            cursor: zoom-in;
+            transition: opacity 0.3s ease-in-out;
+        }
+        /* Estilos para el visor de imagen a pantalla completa */
+        #fullscreen-image {
+            transition: transform 0.2s ease-out; /* Transición suave para el zoom */
+        }
+        .draggable {
+            cursor: grab;
+        }
+        .dragging {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <img src="https://www.coppel.com/images/marca-afore-coppel.png" alt="Logo Afore Coppel" class="absolute top-8 left-8 h-10 z-20">
+
+    <div class="container mx-auto max-w-6xl py-12 px-4 sm:px-6 lg:px-8">
+        <header class="text-center mb-10 pt-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-[#004e91]">Avances y Mejoras</h1>
+            <p class="mt-3 text-lg text-gray-600">Implementadas por la Gerencia de Atención al Público</p>
+        </header>
+
+        <!-- Contenedor del Carrusel con botones de navegación -->
+        <div class="relative">
+            <main id="carousel-container" class="carousel-container flex overflow-x-auto space-x-6 py-4 px-2 scroll-smooth">
+                <!-- Las tarjetas de avances se generarán dinámicamente aquí -->
+            </main>
+
+            <!-- Botón de scroll Izquierda -->
+            <button id="scroll-left-btn" class="absolute top-1/2 -left-4 md:-left-6 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition z-10">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            
+            <!-- Botón de scroll Derecha -->
+            <button id="scroll-right-btn" class="absolute top-1/2 -right-4 md:-right-6 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition z-10">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+        </div>
+        
+        <footer class="text-center mt-12 text-gray-500">
+            <p>Reporte realizado por la Gerencia de Atención al Público - Afore Coppel</p>
+        </footer>
+    </div>
+
+    <!-- Estructura de la Ventana Modal (inicialmente oculta) -->
+    <div id="modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content" class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-2xl transform scale-95">
+            <div class="p-6 md:p-8">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 id="modal-title" class="text-2xl font-bold text-[#004e91]"></h2>
+                    <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div id="modal-image-container" class="relative">
+                        <img id="modal-image" src="" alt="Imagen del Avance" class="rounded-lg w-full h-auto object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Error%20al%20cargar';">
+                        
+                        <!-- Botones del carrusel interno (inicialmente ocultos) -->
+                        <button id="modal-prev-btn" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white/50 rounded-full p-1 shadow-md hover:bg-white/80 transition hidden">
+                             <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <button id="modal-next-btn" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white/50 rounded-full p-1 shadow-md hover:bg-white/80 transition hidden">
+                            <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                         <div id="modal-image-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2 hidden">
+                            <!-- Los puntos se generarán aquí -->
+                        </div>
+                    </div>
+                    <div class="text-gray-600 space-y-4">
+                        <p id="modal-description"></p>
+                        <p id="modal-involucrados" class="text-sm text-gray-500"></p>
+                        <div id="modal-extra-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estructura del visor de imagen a pantalla completa -->
+    <div id="fullscreen-viewer" class="fullscreen-viewer fixed inset-0 bg-black bg-opacity-80 z-[60] flex justify-center items-center p-4 opacity-0 pointer-events-none overflow-hidden">
+        <button id="close-fullscreen-btn" class="absolute top-5 right-8 text-white text-5xl font-bold z-[70]">&times;</button>
+        <img id="fullscreen-image" src="" alt="Vista a pantalla completa" class="max-w-full max-h-full rounded-lg object-contain">
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- IMPORTANTE ---
+            // Reemplaza la siguiente URL con la URL base de tu repositorio de GitHub.
+            // Ejemplo: 'https://raw.githubusercontent.com/tu-usuario/tu-repositorio/main/'
+            const imageBaseUrl = 'https://raw.githubusercontent.com/TU_USUARIO/TU_REPOSITORIO/main/'; 
+
+            // Datos de los avances
+            const avances = [
+                {
+                    titulo: "1. Limitante en CRM",
+                    descripcion: "Se agregó una limitante para no poder cambiar de estatus a 'espera interna' un folio CRM sin antes colocarle un comentario. El objetivo es que se tenga una justificación del cambio de estatus y las áreas involucradas tengan noción de qué se está revisando.",
+                    involucrados: "Mesa de Ayuda, Asesores Previsionales, Ejecutivos de Atención Telefónica, Analistas UNE, Ejecutivos GAP, Analistas GAO, Analistas Pensiones, etc."
+                },
+                {
+                    titulo: "2. Envío de correos automáticos",
+                    descripcion: "Se implementó un envío automático de correo electrónico hacia los trabajadores cuando el folio CRM cambie de estatus a 'Espera Interna', eliminando la necesidad de que los Ejecutivos GAP y Analistas UNE lo hagan manualmente. Adicional de la primer notificación del cambio de estatus, también se implementó el envío automático de correos de seguimiento cada 5, 10, 15, 20 días y periódicamente después de esos días cada 5 días.",
+                    involucrados: "GAP, UNE"
+                },
+                {
+                    titulo: "3. Registro 1ra Interacción",
+                    descripcion: "Se implementó el registro automático de la fecha de la primera interacción que recibe cada folio CRM, permitiendo un seguimiento preciso del momento en que se contactó por primera vez al cliente."
+                },
+                {
+                    titulo: "4. Guías con IA",
+                    descripcion: "Se ha comenzado a utilizar Inteligencia Artificial para generar guías de uso detalladas y fáciles de entender sobre nuestras herramientas internas, agilizizando la capacitación y la resolución de dudas."
+                },
+                {
+                    titulo: "5. Biblioteca de Scripts",
+                    descripcion: "Se creó una Biblioteca de Scripts interna para GAP y UNE. Esta interfaz permite a los agentes buscar y copiar diálogos de respuesta con un solo clic, eficientando los tiempos y unificando el conocimiento entre áreas.",
+                    involucrados: "GAP, UNE"
+                },
+                {
+                    titulo: "6. Asignación Automática",
+                    descripcion: "Se implementó una asignación automática diaria que reduce el proceso de 10-15 minutos manuales a solo 30 segundos con unos pocos clics. El sistema distribuye los folios y genera el reporte al instante.",
+                    involucrados: "GAP",
+                    images: [ // Nombres de archivo para el carrusel interno
+                        "Avance%206.1.jpg",
+                        "Avance%206.2.jpg",
+                        "Avance%206.3.jpg"
+                    ]
+                },
+                {
+                    titulo: "7. Adjuntar Archivos CRM",
+                    descripcion: "Se habilitó en el CRM la opción de adjuntar archivos directamente en el correo de solución de un caso. Esto elimina el paso anterior de enviar un segundo correo con la documentación, unificando la comunicación."
+                },
+                {
+                    titulo: "8. Retros Interactivas",
+                    descripcion: "Se han desarrollado materiales de apoyo y retroalimentaciones interactivas para mejorar la capacitación y el rendimiento de las áreas de CAT y Mesa de Ayuda Operaciones."
+                },
+                {
+                    titulo: "9. Flyers con IA",
+                    descripcion: "Se ha utilizado la Inteligencia Artificial para el diseño y creación de flyers informativos, permitiendo comunicar novedades y procedimientos de manera más visual y rápida."
+                },
+                {
+                    titulo: "10. Dashboard de Quejas",
+                    descripcion: "Se implementó un dashboard en Looker para visualizar las quejas de la Subdirección Comercial. Muestra datos del 2025 filtrados por regiones, estados, y motivos, facilitando el análisis y la toma de decisiones."
+                },
+                {
+                    titulo: "11. Nuevo Catálogo Quejas",
+                    descripcion: "Se instaló un nuevo catálogo para tipificar quejas en el CRM. Ahora se incluyen campos adicionales como 'Problema', 'Situación' y 'Canal de Atención' para un análisis más detallado y preciso de los motivos de queja.",
+                    involucrados: "Todos los usuarios de CRM"
+                }
+            ];
+
+            const carouselContainer = document.getElementById('carousel-container');
+            const scrollLeftBtn = document.getElementById('scroll-left-btn');
+            const scrollRightBtn = document.getElementById('scroll-right-btn');
+            
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalTitle = document.getElementById('modal-title');
+            const modalImage = document.getElementById('modal-image');
+            const modalDescription = document.getElementById('modal-description');
+            const modalInvolucrados = document.getElementById('modal-involucrados');
+            const modalExtraContent = document.getElementById('modal-extra-content');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const modalPrevBtn = document.getElementById('modal-prev-btn');
+            const modalNextBtn = document.getElementById('modal-next-btn');
+            const modalImageDots = document.getElementById('modal-image-dots');
+
+            const fullscreenViewer = document.getElementById('fullscreen-viewer');
+            const fullscreenImage = document.getElementById('fullscreen-image');
+            const closeFullscreenBtn = document.getElementById('close-fullscreen-btn');
+
+            let currentImageIndex = 0;
+            let currentImageSet = [];
+
+            avances.forEach((avance, index) => {
+                const card = document.createElement('div');
+                card.className = 'group flex-shrink-0 w-64 h-80 bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl';
+                card.dataset.index = index; 
+
+                const imageUrl = `${imageBaseUrl}Avance%20${index + 1}.jpg`;
+                card.innerHTML = `
+                    <div class="h-1/2 overflow-hidden">
+                        <img src="${imageUrl}" alt="Avance ${index + 1}: ${avance.titulo}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Error';">
+                    </div>
+                    <div class="p-5 h-1/2 flex justify-center items-center text-center">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-[#004e91] transition-colors">${avance.titulo}</h3>
+                    </div>
+                `;
+                carouselContainer.appendChild(card);
+            });
+            
+            // --- LÓGICA DE CARRUSEL INFINITO ---
+            const setupInfiniteCarousel = () => {
+                const originalCards = Array.from(carouselContainer.children);
+                if (originalCards.length === 0) return;
+
+                originalCards.forEach(card => carouselContainer.appendChild(card.cloneNode(true)));
+                originalCards.slice().reverse().forEach(card => carouselContainer.prepend(card.cloneNode(true)));
+
+                const cardWidth = originalCards[0].offsetWidth + 24; 
+                const oneBlockWidth = cardWidth * originalCards.length;
+
+                carouselContainer.scrollLeft = oneBlockWidth;
+
+                let isTeleporting = false;
+                carouselContainer.addEventListener('scroll', () => {
+                    if (isTeleporting) return;
+                    if (carouselContainer.scrollLeft >= oneBlockWidth * 2) {
+                        isTeleporting = true;
+                        carouselContainer.style.scrollBehavior = 'auto';
+                        carouselContainer.scrollLeft -= oneBlockWidth;
+                    } 
+                    else if (carouselContainer.scrollLeft <= 0) {
+                        isTeleporting = true;
+                        carouselContainer.style.scrollBehavior = 'auto';
+                        carouselContainer.scrollLeft += oneBlockWidth;
+                    }
+                    if (isTeleporting) {
+                        setTimeout(() => {
+                            carouselContainer.style.scrollBehavior = 'smooth';
+                            isTeleporting = false;
+                        }, 50);
+                    }
+                });
+            };
+
+            setTimeout(setupInfiniteCarousel, 100); 
+
+            scrollLeftBtn.addEventListener('click', () => { carouselContainer.scrollLeft -= 280; });
+            scrollRightBtn.addEventListener('click', () => { carouselContainer.scrollLeft += 280; });
+
+            const updateModalImage = () => {
+                if (currentImageSet.length === 0) return;
+                
+                modalImage.style.opacity = 0;
+                setTimeout(() => {
+                    modalImage.src = currentImageSet[currentImageIndex];
+                    modalImage.style.opacity = 1;
+                }, 150);
+
+                modalImageDots.innerHTML = '';
+                currentImageSet.forEach((_, index) => {
+                    const dot = document.createElement('span');
+                    dot.className = `block w-2 h-2 rounded-full cursor-pointer transition-colors ${index === currentImageIndex ? 'bg-white' : 'bg-white/50 hover:bg-white/75'}`;
+                    dot.onclick = () => {
+                        currentImageIndex = index;
+                        updateModalImage();
+                    };
+                    modalImageDots.appendChild(dot);
+                });
+            };
+            
+            modalPrevBtn.addEventListener('click', () => {
+                currentImageIndex = (currentImageIndex - 1 + currentImageSet.length) % currentImageSet.length;
+                updateModalImage();
+            });
+
+            modalNextBtn.addEventListener('click', () => {
+                currentImageIndex = (currentImageIndex + 1) % currentImageSet.length;
+                updateModalImage();
+            });
+
+            const openModal = (index) => {
+                const avance = avances[index];
+                modalTitle.textContent = avance.titulo;
+                modalDescription.textContent = avance.descripcion;
+                
+                if (avance.involucrados) {
+                    modalInvolucrados.style.display = 'block';
+                    let label = "Involucrados";
+                    if (index == 0) {
+                        label = "Áreas involucradas en la atención";
+                    }
+                    modalInvolucrados.innerHTML = `<strong>${label}:</strong> ${avance.involucrados}`;
+                } else {
+                    modalInvolucrados.style.display = 'none';
+                    modalInvolucrados.innerHTML = '';
+                }
+
+                modalExtraContent.innerHTML = '';
+                if (index == 4) {
+                    modalExtraContent.innerHTML = `<a href="https://gap-aforecoppel.github.io/Biblioteca-Scripts/" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">URL del sitio</a>`;
+                } else if (index == 7) { // Corresponde al avance 8
+                     modalExtraContent.innerHTML = `
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <a href="https://gap-aforecoppel.github.io/ConsultaSQL/" target="_blank" rel="noopener noreferrer" class="inline-block bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">
+                                Retro MSO
+                            </a>
+                            <a href="https://aforecoppel-ops.github.io/Seguimiento-retiros-parciales/" target="_blank" rel="noopener noreferrer" class="inline-block bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">
+                                Retro CAT
+                            </a>
+                        </div>
+                    `;
+                } else if (index == 9) { // Corresponde al avance 10
+                    modalExtraContent.innerHTML = `<a href="https://lookerstudio.google.com/reporting/e88486b7-7aeb-404f-9e27-57a97492f11a/page/1I5XF" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">Looker Quejas</a>`;
+                }
+
+
+                if (avance.images && avance.images.length > 0) {
+                    currentImageSet = avance.images.map(imgName => imageBaseUrl + imgName); // Combina la URL base con el nombre del archivo
+                    currentImageIndex = 0;
+                    updateModalImage();
+                    modalPrevBtn.classList.remove('hidden');
+                    modalNextBtn.classList.remove('hidden');
+                    modalImageDots.classList.remove('hidden');
+                } else {
+                    currentImageSet = [];
+                    modalPrevBtn.classList.add('hidden');
+                    modalNextBtn.classList.add('hidden');
+                    modalImageDots.classList.add('hidden');
+                    const imageUrl = `${imageBaseUrl}Avance%20${parseInt(index) + 1}.jpg`;
+                    modalImage.src = imageUrl;
+                    modalImage.alt = `Avance ${parseInt(index) + 1}: ${avance.titulo}`;
+                }
+
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+            };
+
+            const closeModal = () => {
+                modal.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => modal.classList.add('pointer-events-none'), 300);
+            };
+
+            carouselContainer.addEventListener('click', (e) => {
+                const card = e.target.closest('.group');
+                if (card && card.dataset.index) openModal(card.dataset.index);
+            });
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+            // --- LÓGICA PARA ZOOM Y ARRASTRE EN PANTALLA COMPLETA ---
+            let scale = 1, isDragging = false, startX, startY, x = 0, y = 0;
+
+            const openFullscreen = (src) => {
+                fullscreenImage.src = src;
+                scale = 1; x = 0; y = 0;
+                fullscreenImage.style.transform = `translate(0px, 0px) scale(1)`;
+                fullscreenImage.classList.add('draggable');
+                fullscreenImage.classList.remove('dragging');
+                fullscreenViewer.classList.remove('opacity-0', 'pointer-events-none');
+            };
+
+            const closeFullscreen = () => {
+                fullscreenViewer.classList.add('opacity-0');
+                setTimeout(() => fullscreenViewer.classList.add('pointer-events-none'), 300);
+            };
+            
+            modalImage.addEventListener('click', () => openFullscreen(modalImage.src));
+            closeFullscreenBtn.addEventListener('click', closeFullscreen);
+            fullscreenViewer.addEventListener('click', (e) => { if (e.target === fullscreenViewer) closeFullscreen(); });
+
+            fullscreenViewer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                scale = Math.max(0.5, Math.min(scale + delta, 5));
+                fullscreenImage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+            });
+
+            fullscreenImage.addEventListener('mousedown', (e) => {
+                if (scale <= 1) return;
+                e.preventDefault();
+                isDragging = true;
+                startX = e.clientX - x;
+                startY = e.clientY - y;
+                fullscreenImage.classList.add('dragging');
+            });
+            
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                x = e.clientX - startX;
+                y = e.clientY - startY;
+                fullscreenImage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+            });
+            
+            window.addEventListener('mouseup', () => {
+                if(isDragging) {
+                    isDragging = false;
+                    fullscreenImage.classList.remove('dragging');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
