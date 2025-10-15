@@ -55,7 +55,7 @@
 <body class="text-gray-800">
 
     <img src="logo afore coppel.png" alt="Logo Afore Coppel" class="absolute top-8 left-8 h-10 z-20">
-    <img src="logo gap.png" alt="Logo GAP" class="absolute top-8 right-8 h-10 z-20">
+    <img src="logo gap.png" alt="Logo GAP" class="absolute top-8 right-8 h-12 z-20">
 
     <div class="container mx-auto max-w-6xl py-12 px-4 sm:px-6 lg:px-8">
         <header class="text-center mb-10 pt-12">
@@ -126,7 +126,7 @@
         <img id="fullscreen-image" src="" alt="Vista a pantalla completa" class="max-w-full max-h-full rounded-lg object-contain">
         
         <!-- Puntero Personalizado -->
-        <div id="custom-cursor" class="absolute w-4 h-4 rounded-full border-2 border-white pointer-events-none transform -translate-x-1/2 -translate-y-1/2 hidden" style="background-color: #ef4444; z-index: 9999;"></div>
+        <div id="custom-cursor" class="absolute w-4 h-4 rounded-full border-2 border-white pointer-events-none transform -translate-x-1/2 -translate-y-1/2 hidden" style="background-color: #ef4444; z-index: 9999; transition: border-color 0.2s ease;"></div>
 
         <!-- Paleta de Colores -->
         <div id="color-palette" class="absolute bottom-5 left-5 flex space-x-2 z-[80]">
@@ -387,16 +387,16 @@
 
             // --- LÓGICA PARA ZOOM, ARRASTRE Y PUNTERO PERSONALIZADO ---
             let scale = 1, isDragging = false, startX, startY, x = 0, y = 0;
-            let isPainting = false;
+            let paintModeActive = false; // El modo pintura se activa/desactiva
+            let isPainting = false; // Indica si el botón está presionado para pintar
             let currentPointerColor = '#ef4444';
 
             const openFullscreen = (src) => {
                 fullscreenImage.src = src;
                 scale = 1; x = 0; y = 0;
                 fullscreenImage.style.transform = `translate(0px, 0px) scale(1)`;
-                fullscreenImage.classList.add('draggable');
-                fullscreenImage.classList.remove('dragging');
                 fullscreenViewer.classList.remove('opacity-0', 'pointer-events-none');
+                customCursor.classList.remove('hidden');
             };
 
             const closeFullscreen = () => {
@@ -404,13 +404,14 @@
                 setTimeout(() => {
                     fullscreenViewer.classList.add('pointer-events-none');
                     customCursor.classList.add('hidden');
+                    paintModeActive = false;
                 }, 300);
             };
             
             modalImage.addEventListener('click', () => openFullscreen(modalImage.src));
             closeFullscreenBtn.addEventListener('click', closeFullscreen);
             fullscreenViewer.addEventListener('click', (e) => { 
-                if (e.target === fullscreenViewer) closeFullscreen(); 
+                if (e.target === fullscreenViewer && !isDragging) closeFullscreen(); 
             });
 
             fullscreenViewer.addEventListener('wheel', (e) => {
@@ -427,36 +428,34 @@
                 }
                 isPainting = false;
             });
-
-            // --- LÓGICA PARA EL PUNTERO PERSONALIZADO Y PINTURA ---
-            fullscreenViewer.addEventListener('mouseenter', () => {
-                customCursor.classList.remove('hidden');
-            });
-
-            fullscreenViewer.addEventListener('mouseleave', () => {
-                customCursor.classList.add('hidden');
-                isPainting = false;
-            });
             
-            fullscreenViewer.addEventListener('mousedown', () => {
-                isPainting = true;
+            fullscreenViewer.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                paintModeActive = !paintModeActive;
+                customCursor.style.borderColor = paintModeActive ? '#86efac' : 'white';
+            });
+
+            fullscreenViewer.addEventListener('mousedown', (e) => {
+                if(e.button === 0 && paintModeActive && !isDragging) { 
+                    isPainting = true;
+                }
             });
 
             fullscreenImage.addEventListener('mousedown', (e) => {
-                if (scale <= 1) return;
-                e.preventDefault();
-                isDragging = true;
-                isPainting = false; // Desactivar pintura mientras se arrastra la imagen
-                startX = e.clientX - x;
-                startY = e.clientY - y;
-                fullscreenImage.classList.add('dragging');
+                if (scale > 1 && e.button === 0) {
+                    e.preventDefault();
+                    isDragging = true;
+                    startX = e.clientX - x;
+                    startY = e.clientY - y;
+                    fullscreenImage.classList.add('dragging');
+                }
             });
 
             fullscreenViewer.addEventListener('mousemove', (e) => {
                 customCursor.style.left = `${e.clientX}px`;
                 customCursor.style.top = `${e.clientY}px`;
 
-                if (isPainting) {
+                if (isPainting && paintModeActive && !isDragging) {
                     const trailDot = document.createElement('div');
                     trailDot.className = 'absolute rounded-full pointer-events-none';
                     trailDot.style.backgroundColor = currentPointerColor;
@@ -468,7 +467,7 @@
                     trailDot.style.zIndex = '9998';
                     trailDot.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
                     
-                    document.body.appendChild(trailDot);
+                    fullscreenViewer.appendChild(trailDot);
 
                     requestAnimationFrame(() => {
                         trailDot.style.transform = 'translate(-50%, -50%) scale(0)';
