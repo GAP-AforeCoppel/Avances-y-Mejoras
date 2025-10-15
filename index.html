@@ -418,6 +418,9 @@
                 fullscreenImage.style.transform = `translate(0px, 0px) scale(1)`;
                 fullscreenViewer.classList.remove('opacity-0', 'pointer-events-none');
                 customCursor.classList.remove('hidden');
+                // Adjuntar listeners globales al abrir
+                window.addEventListener('mousemove', handleFullscreenMouseMove);
+                window.addEventListener('mouseup', handleFullscreenMouseUp);
             };
 
             const closeFullscreen = () => {
@@ -429,6 +432,9 @@
                     pointerToggleText.textContent = 'OFF';
                     pointerStatus.classList.remove('bg-green-500');
                     pointerStatus.classList.add('bg-red-500');
+                    // Remover listeners globales al cerrar
+                    window.removeEventListener('mousemove', handleFullscreenMouseMove);
+                    window.removeEventListener('mouseup', handleFullscreenMouseUp);
                 }, 300);
             };
             
@@ -445,15 +451,6 @@
                 fullscreenImage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
             });
             
-            window.addEventListener('mouseup', () => {
-                if(isDragging) {
-                    isDragging = false;
-                    fullscreenImage.classList.remove('dragging');
-                }
-            });
-            
-            fullscreenViewer.addEventListener('contextmenu', (e) => e.preventDefault());
-
             fullscreenImage.addEventListener('mousedown', (e) => {
                 if (scale > 1 && e.button === 0) {
                     e.preventDefault();
@@ -464,7 +461,7 @@
                 }
             });
 
-            fullscreenViewer.addEventListener('mousemove', (e) => {
+            function handleFullscreenMouseMove(e) {
                 customCursor.style.left = `${e.clientX}px`;
                 customCursor.style.top = `${e.clientY}px`;
 
@@ -497,7 +494,14 @@
                     y = e.clientY - startY;
                     fullscreenImage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
                 }
-            });
+            }
+
+            function handleFullscreenMouseUp() {
+                if(isDragging) {
+                    isDragging = false;
+                    fullscreenImage.classList.remove('dragging');
+                }
+            }
 
             colorPalette.addEventListener('click', (e) => {
                 e.stopPropagation();
