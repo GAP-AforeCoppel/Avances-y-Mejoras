@@ -46,11 +46,16 @@
         .dragging {
             cursor: grabbing;
         }
+        /* Oculta el cursor del sistema cuando está sobre el visor */
+        .fullscreen-viewer {
+            cursor: none;
+        }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <img src="https://www.coppel.com/images/marca-afore-coppel.png" alt="Logo Afore Coppel" class="absolute top-8 left-8 h-10 z-20">
+    <img src="logo afore coppel.png" alt="Logo Afore Coppel" class="absolute top-8 left-8 h-10 z-20">
+    <img src="logo gap.png" alt="Logo GAP" class="absolute top-8 right-8 h-10 z-20">
 
     <div class="container mx-auto max-w-6xl py-12 px-4 sm:px-6 lg:px-8">
         <header class="text-center mb-10 pt-12">
@@ -117,8 +122,19 @@
 
     <!-- Estructura del visor de imagen a pantalla completa -->
     <div id="fullscreen-viewer" class="fullscreen-viewer fixed inset-0 bg-black bg-opacity-80 z-[60] flex justify-center items-center p-4 opacity-0 pointer-events-none overflow-hidden">
-        <button id="close-fullscreen-btn" class="absolute top-5 right-8 text-white text-5xl font-bold z-[70]">&times;</button>
+        <button id="close-fullscreen-btn" class="absolute top-5 right-8 text-white text-5xl font-bold z-[70] cursor-pointer">&times;</button>
         <img id="fullscreen-image" src="" alt="Vista a pantalla completa" class="max-w-full max-h-full rounded-lg object-contain">
+        
+        <!-- Puntero Personalizado -->
+        <div id="custom-cursor" class="absolute w-4 h-4 rounded-full border-2 border-white pointer-events-none transform -translate-x-1/2 -translate-y-1/2 hidden" style="background-color: #ef4444; z-index: 9999;"></div>
+
+        <!-- Paleta de Colores -->
+        <div id="color-palette" class="absolute bottom-5 left-5 flex space-x-2 z-[80]">
+            <button data-color="#ef4444" class="w-8 h-8 rounded-full bg-red-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
+            <button data-color="#3b82f6" class="w-8 h-8 rounded-full bg-blue-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
+            <button data-color="#eab308" class="w-8 h-8 rounded-full bg-yellow-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
+            <button data-color="#22c55e" class="w-8 h-8 rounded-full bg-green-500 border-2 border-white hover:scale-110 transition-transform cursor-pointer"></button>
+        </div>
     </div>
 
 
@@ -205,6 +221,8 @@
             const fullscreenViewer = document.getElementById('fullscreen-viewer');
             const fullscreenImage = document.getElementById('fullscreen-image');
             const closeFullscreenBtn = document.getElementById('close-fullscreen-btn');
+            const customCursor = document.getElementById('custom-cursor');
+            const colorPalette = document.getElementById('color-palette');
 
             let currentImageIndex = 0;
             let currentImageSet = [];
@@ -213,8 +231,7 @@
                 const card = document.createElement('div');
                 card.className = 'group flex-shrink-0 w-64 h-80 bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl';
                 card.dataset.index = index; 
-
-                // CORRECCIÓN: Se construye el nombre del archivo con un espacio normal
+                
                 const imageUrl = `${imageBaseUrl}Avance ${index + 1}.jpg`; 
                 card.innerHTML = `
                     <div class="h-1/2 overflow-hidden">
@@ -318,7 +335,7 @@
                 modalExtraContent.innerHTML = '';
                 if (index == 4) {
                     modalExtraContent.innerHTML = `<a href="https://gap-aforecoppel.github.io/Biblioteca-Scripts/" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">URL del sitio</a>`;
-                } else if (index == 7) { // Corresponde al avance 8
+                } else if (index == 7) { 
                      modalExtraContent.innerHTML = `
                         <div class="flex flex-wrap gap-2 mt-2">
                             <a href="https://gap-aforecoppel.github.io/ConsultaSQL/" target="_blank" rel="noopener noreferrer" class="inline-block bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">
@@ -329,13 +346,13 @@
                             </a>
                         </div>
                     `;
-                } else if (index == 9) { // Corresponde al avance 10
+                } else if (index == 9) { 
                     modalExtraContent.innerHTML = `<a href="https://lookerstudio.google.com/reporting/e88486b7-7aeb-404f-9e27-57a97492f11a/page/1I5XF" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">Looker Quejas</a>`;
                 }
 
 
                 if (avance.images && avance.images.length > 0) {
-                    currentImageSet = avance.images.map(imgName => imageBaseUrl + imgName); // Combina la URL base con el nombre del archivo
+                    currentImageSet = avance.images.map(imgName => imageBaseUrl + imgName); 
                     currentImageIndex = 0;
                     updateModalImage();
                     modalPrevBtn.classList.remove('hidden');
@@ -346,7 +363,6 @@
                     modalPrevBtn.classList.add('hidden');
                     modalNextBtn.classList.add('hidden');
                     modalImageDots.classList.add('hidden');
-                    // CORRECCIÓN: Se construye el nombre del archivo con un espacio normal
                     const imageUrl = `${imageBaseUrl}Avance ${parseInt(index) + 1}.jpg`;
                     modalImage.src = imageUrl;
                     modalImage.alt = `Avance ${parseInt(index) + 1}: ${avance.titulo}`;
@@ -369,8 +385,10 @@
             closeModalBtn.addEventListener('click', closeModal);
             modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-            // --- LÓGICA PARA ZOOM Y ARRASTRE EN PANTALLA COMPLETA ---
+            // --- LÓGICA PARA ZOOM, ARRASTRE Y PUNTERO PERSONALIZADO ---
             let scale = 1, isDragging = false, startX, startY, x = 0, y = 0;
+            let isPainting = false;
+            let currentPointerColor = '#ef4444';
 
             const openFullscreen = (src) => {
                 fullscreenImage.src = src;
@@ -383,12 +401,17 @@
 
             const closeFullscreen = () => {
                 fullscreenViewer.classList.add('opacity-0');
-                setTimeout(() => fullscreenViewer.classList.add('pointer-events-none'), 300);
+                setTimeout(() => {
+                    fullscreenViewer.classList.add('pointer-events-none');
+                    customCursor.classList.add('hidden');
+                }, 300);
             };
             
             modalImage.addEventListener('click', () => openFullscreen(modalImage.src));
             closeFullscreenBtn.addEventListener('click', closeFullscreen);
-            fullscreenViewer.addEventListener('click', (e) => { if (e.target === fullscreenViewer) closeFullscreen(); });
+            fullscreenViewer.addEventListener('click', (e) => { 
+                if (e.target === fullscreenViewer) closeFullscreen(); 
+            });
 
             fullscreenViewer.addEventListener('wheel', (e) => {
                 e.preventDefault();
@@ -396,28 +419,79 @@
                 scale = Math.max(0.5, Math.min(scale + delta, 5));
                 fullscreenImage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
             });
-
-            fullscreenImage.addEventListener('mousedown', (e) => {
-                if (scale <= 1) return;
-                e.preventDefault();
-                isDragging = true;
-                startX = e.clientX - x;
-                startY = e.clientY - y;
-                fullscreenImage.classList.add('dragging');
-            });
-            
-            window.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
-                x = e.clientX - startX;
-                y = e.clientY - startY;
-                fullscreenImage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-            });
             
             window.addEventListener('mouseup', () => {
                 if(isDragging) {
                     isDragging = false;
                     fullscreenImage.classList.remove('dragging');
+                }
+                isPainting = false;
+            });
+
+            // --- LÓGICA PARA EL PUNTERO PERSONALIZADO Y PINTURA ---
+            fullscreenViewer.addEventListener('mouseenter', () => {
+                customCursor.classList.remove('hidden');
+            });
+
+            fullscreenViewer.addEventListener('mouseleave', () => {
+                customCursor.classList.add('hidden');
+                isPainting = false;
+            });
+            
+            fullscreenViewer.addEventListener('mousedown', () => {
+                isPainting = true;
+            });
+
+            fullscreenImage.addEventListener('mousedown', (e) => {
+                if (scale <= 1) return;
+                e.preventDefault();
+                isDragging = true;
+                isPainting = false; // Desactivar pintura mientras se arrastra la imagen
+                startX = e.clientX - x;
+                startY = e.clientY - y;
+                fullscreenImage.classList.add('dragging');
+            });
+
+            fullscreenViewer.addEventListener('mousemove', (e) => {
+                customCursor.style.left = `${e.clientX}px`;
+                customCursor.style.top = `${e.clientY}px`;
+
+                if (isPainting) {
+                    const trailDot = document.createElement('div');
+                    trailDot.className = 'absolute rounded-full pointer-events-none';
+                    trailDot.style.backgroundColor = currentPointerColor;
+                    trailDot.style.left = `${e.clientX}px`;
+                    trailDot.style.top = `${e.clientY}px`;
+                    trailDot.style.width = '12px';
+                    trailDot.style.height = '12px';
+                    trailDot.style.transform = 'translate(-50%, -50%)';
+                    trailDot.style.zIndex = '9998';
+                    trailDot.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
+                    
+                    document.body.appendChild(trailDot);
+
+                    requestAnimationFrame(() => {
+                        trailDot.style.transform = 'translate(-50%, -50%) scale(0)';
+                        trailDot.style.opacity = '0';
+                    });
+
+                    setTimeout(() => {
+                        trailDot.remove();
+                    }, 500);
+                }
+                
+                if (isDragging) {
+                    x = e.clientX - startX;
+                    y = e.clientY - startY;
+                    fullscreenImage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+                }
+            });
+
+            colorPalette.addEventListener('click', (e) => {
+                const button = e.target.closest('button');
+                if (button && button.dataset.color) {
+                    currentPointerColor = button.dataset.color;
+                    customCursor.style.backgroundColor = currentPointerColor;
                 }
             });
         });
