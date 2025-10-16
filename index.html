@@ -236,6 +236,13 @@
                     descripcion: "Se instaló un nuevo catálogo para tipificar quejas en el CRM. Ahora se incluyen campos adicionales como 'Problema', 'Situación' y 'Canal de Atención' para un análisis más detallado y preciso de los motivos de queja.",
                     involucrados: "Todos los usuarios de CRM",
                     fecha: "Octubre 2025"
+                },
+                {
+                    id: 12,
+                    titulo: "Dashboard - Campaña Servicio al Cliente Mayor y Menor",
+                    descripcion: "Se implementó el dashboard de la Campaña Servicio al Cliente Mayor y Menor inclyendo experimento Banamex para identificar oportunidades para acciones de mejora.",
+                    fecha: "Octubre 2025",
+                    imageName: "Avance Misa.jpg"
                 }
             ];
 
@@ -286,8 +293,8 @@
                 card.className = 'group flex-shrink-0 w-64 h-80 bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl';
                 card.dataset.index = index; // El índice ahora corresponde al array ordenado
                 
-                // Usamos avance.id para mantener la referencia a la imagen original correcta
-                const imageUrl = `${imageBaseUrl}Avance ${avance.id}.jpg`; 
+                const imageName = avance.imageName || `Avance ${avance.id}.jpg`;
+                const imageUrl = `${imageBaseUrl}${imageName}`; 
                 card.innerHTML = `
                     <div class="h-1/2 overflow-hidden">
                         <img src="${imageUrl}" alt="${avance.titulo}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Error';">
@@ -423,7 +430,8 @@
                     modalPrevBtn.classList.add('hidden');
                     modalNextBtn.classList.add('hidden');
                     modalImageDots.classList.add('hidden');
-                    const imageUrl = `${imageBaseUrl}Avance ${avance.id}.jpg`;
+                    const imageName = avance.imageName || `Avance ${avance.id}.jpg`;
+                    const imageUrl = `${imageBaseUrl}${imageName}`;
                     modalImage.src = imageUrl;
                     modalImage.alt = `${avance.titulo}`;
                 }
