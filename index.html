@@ -66,7 +66,7 @@
             </h1>
             <div class="flex justify-center items-center mt-4 space-x-3">
                 <span class="text-lg text-gray-600">Implementadas por</span>
-                <img src="logo gap.png" alt="Logo Gerencia de Atención al Público" class="h-14">
+                <img src="logo gap.png" alt="Logo Gerencia de Atención al Público" class="h-20">
             </div>
         </header>
 
@@ -164,25 +164,30 @@
                 {
                     titulo: "1. Limitante en CRM",
                     descripcion: "Se agregó una limitante para no poder cambiar de estatus a 'espera interna' un folio CRM sin antes colocarle un comentario. El objetivo es que se tenga una justificación del cambio de estatus y las áreas involucradas tengan noción de qué se está revisando.",
-                    involucrados: "Mesa de Ayuda, Asesores Previsionales, Ejecutivos de Atención Telefónica, Analistas UNE, Ejecutivos GAP, Analistas GAO, Analistas Pensiones, etc."
+                    involucrados: "Mesa de Ayuda, Asesores Previsionales, Ejecutivos de Atención Telefónica, Analistas UNE, Ejecutivos GAP, Analistas GAO, Analistas Pensiones, etc.",
+                    fecha: "Julio 2025"
                 },
                 {
                     titulo: "2. Envío de correos automáticos",
                     descripcion: "Se implementó un envío automático de correo electrónico hacia los trabajadores cuando el folio CRM cambie de estatus a 'Espera Interna', eliminando la necesidad de que los Ejecutivos GAP y Analistas UNE lo hagan manualmente. Adicional de la primer notificación del cambio de estatus, también se implementó el envío automático de correos de seguimiento cada 5, 10, 15, 20 días y periódicamente después de esos días cada 5 días.",
-                    involucrados: "GAP, UNE"
+                    involucrados: "GAP, UNE",
+                    fecha: "Octubre 2025"
                 },
                 {
                     titulo: "3. Registro 1ra Interacción",
-                    descripcion: "Se implementó el registro automático de la fecha de la primera interacción que recibe cada folio CRM, permitiendo un seguimiento preciso del momento en que se contactó por primera vez al cliente."
+                    descripcion: "Se implementó el registro automático de la fecha de la primera interacción que recibe cada folio CRM, permitiendo un seguimiento preciso del momento en que se contactó por primera vez al cliente.",
+                    fecha: "Octubre 2025"
                 },
                 {
                     titulo: "4. Guías con IA",
-                    descripcion: "Se ha comenzado a utilizar Inteligencia Artificial para generar guías de uso detalladas y fáciles de entender sobre nuestras herramientas internas, agilizizando la capacitación y la resolución de dudas."
+                    descripcion: "Se ha comenzado a utilizar Inteligencia Artificial para generar guías de uso detalladas y fáciles de entender sobre nuestras herramientas internas, agilizizando la capacitación y la resolución de dudas.",
+                    fecha: "Octubre 2025"
                 },
                 {
                     titulo: "5. Biblioteca de Scripts",
                     descripcion: "Se creó una Biblioteca de Scripts interna para GAP y UNE. Esta interfaz permite a los agentes buscar y copiar diálogos de respuesta con un solo clic, eficientando los tiempos y unificando el conocimiento entre áreas.",
-                    involucrados: "GAP, UNE"
+                    involucrados: "GAP, UNE",
+                    fecha: "Octubre 2025"
                 },
                 {
                     titulo: "6. Asignación Automática",
@@ -192,28 +197,34 @@
                         "Avance 6.1.jpg",
                         "Avance 6.2.jpg",
                         "Avance 6.3.jpg"
-                    ]
+                    ],
+                    fecha: "Julio 2025"
                 },
                 {
                     titulo: "7. Adjuntar Archivos CRM",
-                    descripcion: "Se habilitó en el CRM la opción de adjuntar archivos directamente en el correo de solución de un caso. Esto elimina el paso anterior de enviar un segundo correo con la documentación, unificando la comunicación."
+                    descripcion: "Se habilitó en el CRM la opción de adjuntar archivos directamente en el correo de solución de un caso. Esto elimina el paso anterior de enviar un segundo correo con la documentación, unificando la comunicación.",
+                    fecha: "Mayo 2025"
                 },
                 {
                     titulo: "8. Retros Interactivas",
-                    descripcion: "Se han desarrollado materiales de apoyo y retroalimentaciones interactivas para mejorar la capacitación y el rendimiento de las áreas de CAT y Mesa de Ayuda Operaciones."
+                    descripcion: "Se han desarrollado materiales de apoyo y retroalimentaciones interactivas para mejorar la capacitación y el rendimiento de las áreas de CAT y Mesa de Ayuda Operaciones.",
+                    fecha: "Septiembre 2025"
                 },
                 {
                     titulo: "9. Flyers con IA",
-                    descripcion: "Se ha utilizado la Inteligencia Artificial para el diseño y creación de flyers informativos, permitiendo comunicar novedades y procedimientos de manera más visual y rápida."
+                    descripcion: "Se ha utilizado la Inteligencia Artificial para el diseño y creación de flyers informativos, permitiendo comunicar novedades y procedimientos de manera más visual y rápida.",
+                    fecha: "Septiembre 2025"
                 },
                 {
                     titulo: "10. Dashboard de Quejas",
-                    descripcion: "Se implementó un dashboard en Looker para visualizar las quejas de la Subdirección Comercial. Muestra datos del 2025 filtrados por regiones, estados, y motivos, facilitando el análisis y la toma de decisiones."
+                    descripcion: "Se implementó un dashboard en Looker para visualizar las quejas de la Subdirección Comercial. Muestra datos del 2025 filtrados por regiones, estados, y motivos, facilitando el análisis y la toma de decisiones.",
+                    fecha: "Septiembre 2025"
                 },
                 {
                     titulo: "11. Nuevo Catálogo Quejas",
                     descripcion: "Se instaló un nuevo catálogo para tipificar quejas en el CRM. Ahora se incluyen campos adicionales como 'Problema', 'Situación' y 'Canal de Atención' para un análisis más detallado y preciso de los motivos de queja.",
-                    involucrados: "Todos los usuarios de CRM"
+                    involucrados: "Todos los usuarios de CRM",
+                    fecha: "Octubre 2025"
                 }
             ];
 
@@ -255,8 +266,9 @@
                     <div class="h-1/2 overflow-hidden">
                         <img src="${imageUrl}" alt="Avance ${index + 1}: ${avance.titulo}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Error';">
                     </div>
-                    <div class="p-5 h-1/2 flex justify-center items-center text-center">
+                    <div class="p-5 h-1/2 flex flex-col justify-center items-center text-center">
                         <h3 class="text-lg font-bold text-gray-800 group-hover:text-[#004e91] transition-colors">${avance.titulo}</h3>
+                        <p class="text-sm text-gray-500 mt-2">${avance.fecha}</p>
                     </div>
                 `;
                 carouselContainer.appendChild(card);
