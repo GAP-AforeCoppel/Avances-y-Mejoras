@@ -162,34 +162,40 @@
             // Datos de los avances
             const avances = [
                 {
+                    id: 1,
                     titulo: "1. Limitante en CRM",
                     descripcion: "Se agregó una limitante para no poder cambiar de estatus a 'espera interna' un folio CRM sin antes colocarle un comentario. El objetivo es que se tenga una justificación del cambio de estatus y las áreas involucradas tengan noción de qué se está revisando.",
                     involucrados: "Mesa de Ayuda, Asesores Previsionales, Ejecutivos de Atención Telefónica, Analistas UNE, Ejecutivos GAP, Analistas GAO, Analistas Pensiones, etc.",
                     fecha: "Julio 2025"
                 },
                 {
+                    id: 2,
                     titulo: "2. Envío de correos automáticos",
                     descripcion: "Se implementó un envío automático de correo electrónico hacia los trabajadores cuando el folio CRM cambie de estatus a 'Espera Interna', eliminando la necesidad de que los Ejecutivos GAP y Analistas UNE lo hagan manualmente. Adicional de la primer notificación del cambio de estatus, también se implementó el envío automático de correos de seguimiento cada 5, 10, 15, 20 días y periódicamente después de esos días cada 5 días.",
                     involucrados: "GAP, UNE",
                     fecha: "Octubre 2025"
                 },
                 {
+                    id: 3,
                     titulo: "3. Registro 1ra Interacción",
                     descripcion: "Se implementó el registro automático de la fecha de la primera interacción que recibe cada folio CRM, permitiendo un seguimiento preciso del momento en que se contactó por primera vez al cliente.",
                     fecha: "Octubre 2025"
                 },
                 {
+                    id: 4,
                     titulo: "4. Guías con IA",
                     descripcion: "Se ha comenzado a utilizar Inteligencia Artificial para generar guías de uso detalladas y fáciles de entender sobre nuestras herramientas internas, agilizizando la capacitación y la resolución de dudas.",
                     fecha: "Octubre 2025"
                 },
                 {
+                    id: 5,
                     titulo: "5. Biblioteca de Scripts",
                     descripcion: "Se creó una Biblioteca de Scripts interna para GAP y UNE. Esta interfaz permite a los agentes buscar y copiar diálogos de respuesta con un solo clic, eficientando los tiempos y unificando el conocimiento entre áreas.",
                     involucrados: "GAP, UNE",
                     fecha: "Octubre 2025"
                 },
                 {
+                    id: 6,
                     titulo: "6. Asignación Automática",
                     descripcion: "Se implementó una asignación automática diaria que reduce el proceso de 10-15 minutos manuales a solo 30 segundos con unos pocos clics. El sistema distribuye los folios y genera el reporte al instante.",
                     involucrados: "GAP",
@@ -201,32 +207,51 @@
                     fecha: "Julio 2025"
                 },
                 {
+                    id: 7,
                     titulo: "7. Adjuntar Archivos CRM",
                     descripcion: "Se habilitó en el CRM la opción de adjuntar archivos directamente en el correo de solución de un caso. Esto elimina el paso anterior de enviar un segundo correo con la documentación, unificando la comunicación.",
                     fecha: "Mayo 2025"
                 },
                 {
+                    id: 8,
                     titulo: "8. Retros Interactivas",
                     descripcion: "Se han desarrollado materiales de apoyo y retroalimentaciones interactivas para mejorar la capacitación y el rendimiento de las áreas de CAT y Mesa de Ayuda Operaciones.",
                     fecha: "Septiembre 2025"
                 },
                 {
+                    id: 9,
                     titulo: "9. Flyers con IA",
                     descripcion: "Se ha utilizado la Inteligencia Artificial para el diseño y creación de flyers informativos, permitiendo comunicar novedades y procedimientos de manera más visual y rápida.",
                     fecha: "Septiembre 2025"
                 },
                 {
+                    id: 10,
                     titulo: "10. Dashboard de Quejas",
                     descripcion: "Se implementó un dashboard en Looker para visualizar las quejas de la Subdirección Comercial. Muestra datos del 2025 filtrados por regiones, estados, y motivos, facilitando el análisis y la toma de decisiones.",
                     fecha: "Septiembre 2025"
                 },
                 {
+                    id: 11,
                     titulo: "11. Nuevo Catálogo Quejas",
                     descripcion: "Se instaló un nuevo catálogo para tipificar quejas en el CRM. Ahora se incluyen campos adicionales como 'Problema', 'Situación' y 'Canal de Atención' para un análisis más detallado y preciso de los motivos de queja.",
                     involucrados: "Todos los usuarios de CRM",
                     fecha: "Octubre 2025"
                 }
             ];
+
+            // --- LÓGICA DE ORDENAMIENTO CRONOLÓGICO ---
+            const monthMap = {
+                'Enero': 0, 'Febrero': 1, 'Marzo': 2, 'Abril': 3, 'Mayo': 4, 'Junio': 5,
+                'Julio': 6, 'Agosto': 7, 'Septiembre': 8, 'Octubre': 9, 'Noviembre': 10, 'Diciembre': 11
+            };
+
+            avances.forEach(avance => {
+                const [monthName, year] = avance.fecha.split(' ');
+                avance.dateObject = new Date(year, monthMap[monthName]);
+            });
+
+            avances.sort((a, b) => a.dateObject - b.dateObject);
+
 
             const carouselContainer = document.getElementById('carousel-container');
             const scrollLeftBtn = document.getElementById('scroll-left-btn');
@@ -259,12 +284,13 @@
             avances.forEach((avance, index) => {
                 const card = document.createElement('div');
                 card.className = 'group flex-shrink-0 w-64 h-80 bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl';
-                card.dataset.index = index; 
+                card.dataset.index = index; // El índice ahora corresponde al array ordenado
                 
-                const imageUrl = `${imageBaseUrl}Avance ${index + 1}.jpg`; 
+                // Usamos avance.id para mantener la referencia a la imagen original correcta
+                const imageUrl = `${imageBaseUrl}Avance ${avance.id}.jpg`; 
                 card.innerHTML = `
                     <div class="h-1/2 overflow-hidden">
-                        <img src="${imageUrl}" alt="Avance ${index + 1}: ${avance.titulo}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Error';">
+                        <img src="${imageUrl}" alt="${avance.titulo}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Error';">
                     </div>
                     <div class="p-5 h-1/2 flex flex-col justify-center items-center text-center">
                         <h3 class="text-lg font-bold text-gray-800 group-hover:text-[#004e91] transition-colors">${avance.titulo}</h3>
@@ -346,14 +372,14 @@
             });
 
             const openModal = (index) => {
-                const avance = avances[index];
+                const avance = avances[index]; // Obtenemos el avance del array ya ordenado
                 modalTitle.textContent = avance.titulo;
                 modalDescription.textContent = avance.descripcion;
                 
                 if (avance.involucrados) {
                     modalInvolucrados.style.display = 'block';
                     let label = "Involucrados";
-                    if (index == 0) {
+                    if (avance.id == 1) { // Usamos el ID original para la lógica específica
                         label = "Áreas involucradas en la atención";
                     }
                     modalInvolucrados.innerHTML = `<strong>${label}:</strong> ${avance.involucrados}`;
@@ -363,11 +389,11 @@
                 }
 
                 modalExtraContent.innerHTML = '';
-                 if (index == 3) { 
+                 if (avance.id == 4) { 
                     modalExtraContent.innerHTML = `<a href="https://aforecoppel-ops.github.io/utileria/" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">Guía de Herramienta</a>`;
-                } else if (index == 4) {
+                } else if (avance.id == 5) {
                     modalExtraContent.innerHTML = `<a href="https://gap-aforecoppel.github.io/Biblioteca-Scripts/" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">URL del sitio</a>`;
-                } else if (index == 7) { 
+                } else if (avance.id == 8) { 
                      modalExtraContent.innerHTML = `
                         <div class="flex flex-wrap gap-2 mt-2">
                             <a href="https://gap-aforecoppel.github.io/ConsultaSQL/" target="_blank" rel="noopener noreferrer" class="inline-block bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">
@@ -378,9 +404,9 @@
                             </a>
                         </div>
                     `;
-                } else if (index == 8) { 
+                } else if (avance.id == 9) { 
                     modalExtraContent.innerHTML = `<a href="https://aforecoppel-ops.github.io/Identificaciones-Validas/" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">Flyer Interactivo</a>`;
-                } else if (index == 9) { 
+                } else if (avance.id == 10) { 
                     modalExtraContent.innerHTML = `<a href="https://lookerstudio.google.com/reporting/e88486b7-7aeb-404f-9e27-57a97492f11a/page/1I5XF" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 bg-[#004e91] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#003a6e] transition-colors">Looker Quejas</a>`;
                 }
 
@@ -397,9 +423,9 @@
                     modalPrevBtn.classList.add('hidden');
                     modalNextBtn.classList.add('hidden');
                     modalImageDots.classList.add('hidden');
-                    const imageUrl = `${imageBaseUrl}Avance ${parseInt(index) + 1}.jpg`;
+                    const imageUrl = `${imageBaseUrl}Avance ${avance.id}.jpg`;
                     modalImage.src = imageUrl;
-                    modalImage.alt = `Avance ${parseInt(index) + 1}: ${avance.titulo}`;
+                    modalImage.alt = `${avance.titulo}`;
                 }
 
                 modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -413,7 +439,9 @@
 
             carouselContainer.addEventListener('click', (e) => {
                 const card = e.target.closest('.group');
-                if (card && card.dataset.index) openModal(card.dataset.index);
+                if (card && card.dataset.index) {
+                    openModal(card.dataset.index);
+                }
             });
 
             closeModalBtn.addEventListener('click', closeModal);
@@ -430,7 +458,6 @@
                 fullscreenImage.style.transform = `translate(0px, 0px) scale(1)`;
                 fullscreenViewer.classList.remove('opacity-0', 'pointer-events-none');
                 customCursor.classList.remove('hidden');
-                // Adjuntar listeners globales al abrir
                 window.addEventListener('mousemove', handleFullscreenMouseMove);
                 window.addEventListener('mouseup', handleFullscreenMouseUp);
             };
@@ -444,7 +471,6 @@
                     pointerToggleText.textContent = 'OFF';
                     pointerStatus.classList.remove('bg-green-500');
                     pointerStatus.classList.add('bg-red-500');
-                    // Remover listeners globales al cerrar
                     window.removeEventListener('mousemove', handleFullscreenMouseMove);
                     window.removeEventListener('mouseup', handleFullscreenMouseUp);
                 }, 300);
